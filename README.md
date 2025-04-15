@@ -8,7 +8,6 @@ Die Arbeit befasst sich mit der klassischen und der erwartungsaugmentierten Phil
 
 ## Inhalt
 
-- Dateneinlesung und Vorverarbeitung
 - Visualisierung von Output Gap, HICP-Inflationsrate und erwarteter HICP-Inflationsrate
 - Zeitliche Segmentierung und länderspezifische Darstellung der klassischen Phillips-Kurve (inkusive Belgien und Finnland)
 - Zeitliche Segmentierung und Darstellung der NKPK
