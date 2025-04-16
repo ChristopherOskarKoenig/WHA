@@ -13,7 +13,7 @@ if not os.path.exists(csv_path):
 df = pd.read_csv(csv_path)
 df.columns = df.columns.str.strip()
 df['Year'] = df['Year'].astype(int)
-finnland_df = df[df['Country'] == 'Finnland'].copy()
+belgien_df = df[df['Country'] == 'Belgien'].copy()
 
 def assign_period(year):
     if 2002 <= year <= 2007:
@@ -26,7 +26,7 @@ def assign_period(year):
         return '2020-2024'
     return 'Andere'
 
-finnland_df['Period'] = finnland_df['Year'].apply(assign_period)
+belgien_df['Period'] = belgien_df['Year'].apply(assign_period)
 
 mpl.rcParams['font.family'] = 'Arial'
 sns.set_style("white")
@@ -42,25 +42,25 @@ color_ogap = '#A678D1'
 rot = '#E33620'
 gruen = '#7CF24D'
 
-x_min = finnland_df['Output_GAP'].min() - 0.5
-x_max = finnland_df['Output_GAP'].max() + 0.5
-y_min = finnland_df['HICP'].min() - 1
-y_max = finnland_df['HICP'].max() + 1
+x_min = belgien_df['Output_GAP'].min() - 0.5
+x_max = belgien_df['Output_GAP'].max() + 0.5
+y_min = belgien_df['HICP'].min() - 1
+y_max = belgien_df['HICP'].max() + 1
 
 fig, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=120)
 fig.subplots_adjust(wspace=0.1)
 
-axes[0].plot(finnland_df['Year'], finnland_df['HICP'], label='HICP-Inflation (%)',
+axes[0].plot(belgien_df['Year'], belgien_df['HICP'], label='HICP-Inflation (%)',
              color=color_hicp, linewidth=2, marker='o')
-axes[0].plot(finnland_df['Year'], finnland_df['Output_GAP'], label='Output Gap (%)',
+axes[0].plot(belgien_df['Year'], belgien_df['Output_GAP'], label='Output Gap (%)',
              color=color_ogap, linewidth=2, linestyle='--', marker='s')
 axes[0].set_title("Zeitverlauf: Output Gap & HICP-Inflationsrate", fontsize=11)
 axes[0].set_xlabel("Jahr")
 axes[0].set_ylabel("HICP-Inflationsrate in %", labelpad=1)
-combined_min = min(finnland_df['Output_GAP'].min(), finnland_df['HICP'].min()) - 0.5
-combined_max = max(finnland_df['Output_GAP'].max(), finnland_df['HICP'].max()) + 0.5
+combined_min = min(belgien_df['Output_GAP'].min(), belgien_df['HICP'].min()) - 0.5
+combined_max = max(belgien_df['Output_GAP'].max(), belgien_df['HICP'].max()) + 0.5
 axes[0].set_ylim(combined_min, combined_max)
-axes[0].set_xlim(finnland_df['Year'].min() - 0.5, finnland_df['Year'].max() + 0.5)
+axes[0].set_xlim(belgien_df['Year'].min() - 0.5, belgien_df['Year'].max() + 0.5)
 axes[0].set_box_aspect(1)
 axes[0].spines['top'].set_visible(False)
 axes[0].spines['right'].set_visible(False)
@@ -69,7 +69,7 @@ axes[0].grid(True, linestyle=':', linewidth=0.5)
 axes[0].legend(loc='upper left')
 
 sns.scatterplot(
-    data=finnland_df,
+    data=belgien_df,
     x='Output_GAP',
     y='HICP',
     ax=axes[1],
@@ -81,16 +81,16 @@ sns.scatterplot(
     label="Datenpunkte"
 )
 model = LinearRegression()
-X = finnland_df[['Output_GAP']]
-y = finnland_df['HICP']
+X = belgien_df[['Output_GAP']]
+y = belgien_df['HICP']
 model.fit(X, y)
 slope = model.coef_[0]
 intercept = model.intercept_
-x_vals = pd.Series([finnland_df['Output_GAP'].min(), finnland_df['Output_GAP'].max()])
+x_vals = pd.Series([belgien_df['Output_GAP'].min(), belgien_df['Output_GAP'].max()])
 y_vals = intercept + slope * x_vals
 axes[1].plot(x_vals, y_vals, color='black', linewidth=2, label="Regressionsgerade")
 
-axes[1].set_title("Phillips-Kurve – Finnland (2002–2024)", fontsize=11)
+axes[1].set_title("Phillips-Kurve – Belgien (2002–2024)", fontsize=11)
 axes[1].set_xlabel("Output Gap in %")
 axes[1].set_ylabel("")
 axes[1].set_xlim(x_min, x_max)
@@ -107,7 +107,7 @@ axes[1].axhline(y=intercept, linestyle='--', color=rot, linewidth=1)
 axes[1].legend(loc='upper left')
 
 sns.scatterplot(
-    data=finnland_df,
+    data=belgien_df,
     x='Output_GAP',
     y='HICP',
     hue='Period',
@@ -118,7 +118,7 @@ sns.scatterplot(
     edgecolor='black',
     linewidth=0.4
 )
-for period, pdata in finnland_df.groupby('Period'):
+for period, pdata in belgien_df.groupby('Period'):
     if len(pdata) >= 2:
         x = pdata['Output_GAP']
         y = pdata['HICP']
@@ -140,6 +140,6 @@ axes[2].grid(True, linestyle=':', linewidth=0.5)
 axes[2].axvline(x=0, linestyle=':', color='black', linewidth=1)
 axes[2].axhline(y=0, linestyle=':', color='black', linewidth=1)
 axes[2].axhline(y=2, linestyle='--', color=gruen, linewidth=1)
-axes[2].legend(title='Periode', loc='upper left')  # <-- HIER ist jetzt korrekt platziert
+axes[2].legend(title='Periode', loc='upper left')
 
 plt.show()
